@@ -24,4 +24,8 @@
 | `CS2012` cannot write the DLL | game running | toolchain |
 | `Faction leader for X is null` | non-hidden faction with no leader source | defs-and-xml |
 | Mod setting new default does not appear | existing settings file keeps the old value | gameplay-snippets |
+| `Designations of type Mine are indexed by location only` | asked for a Mine designation on a Thing; it is per cell | mapgen-and-lifecycle |
+| Wandering group walls-in colony still gets attacked | a building (the wall) triggers detection, or the pursuit duty has the sapper | lords-and-ai |
+| Everything fails with CS0006 after a game update | game folder layout or version changed; check `Version.txt` and Steam branch | mapgen-and-lifecycle |
+| A mod checkbox does nothing | setting saved but never read | mapgen-and-lifecycle |
 | Letters or pawns fail during generation | not available during map generation; defer to first tick | mapgen-and-lifecycle |

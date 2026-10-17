@@ -55,3 +55,22 @@ Hazards in these givers:
 - **Guards:** own lord + own duty using `JobGiver_AIDefendPoint`-style givers, never pulled by the rally logic. To make a few chase an attacker, swap those pawns to a second duty and `EndCurrentJob`; end the chase on attacker death, downed, timeout, or leash distance.
 - **Notify on guard damage:** override `LordToil.Notify_PawnDamaged`; `dinfo.Instigator` is the shooter even for ranged attacks (verified: guards react to snipers).
 - **Raid wave:** own `LordJob` whose toil is the attack toil with a march focus, refreshed every ~250 ticks. Not a vanilla assault job.
+
+## Detection vs. pursuit: what "can see" must and must not cover
+
+- Detection by line of sight: `GenSight.LineOfSightToThing(origin, target, map)`. Cheap enough to run per pawn on a stagger. It returns true through windows and low walls (vanilla treats them as non-blocking).
+- **Never let a building trigger detection.** A wall is a colony building and its outer face is always visible from outside, so a fully walled-in colony would keep triggering. Detect people only.
+- After a fight starts, a group that grew out of wanderers can drop the sight requirement and chase along open routes (killbox play). The two halves are separate: sight to start, reachability to continue.
+- **No wall-breaking for that group:** do not put `JobGiver_AISapper` or `JobGiver_AITrash*` in its duty. Use a giver that only issues `Goto` toward a colonist that `pawn.CanReach(target, PathEndMode.Touch, Danger.Deadly)` says is reachable. `CanReach` with the default traversal does not pass walls or bash doors, so a sealed colony returns "unreachable". Also require reachability to keep the group alive, or it will stand at the wall forever.
+- Do not use `JobGiver_AIGotoNearestHostile` when the group must be able to give up: it has no distance limit.
+- A raid wave (not a pursuit) can keep `JobGiver_AISapper` so a walled-in tower cannot stall the game.
+
+## Guards and chasers
+
+- Guard duty: vanilla `JobGiver_AIDefendPoint` subclass, overriding `GetFlagPosition` / `GetFlagRadius` to confine target acquisition to the leash.
+- Reacting to a sniper: `LordToil.Notify_PawnDamaged(victim, dinfo)`, `dinfo.Instigator` is the shooter for ranged damage (verified in game). The same call in `Building.PreApplyDamage` covers damage to the building. Pick the N nearest guards, switch them to a chase duty, `EndCurrentJob`, and end the chase on attacker dead/downed, timeout, or leash distance. Keep the chase state transient (not saved).
+- A shield belt (`blocksRangedWeapons`) stops the wearer using any ranged weapon. Do not give it to a ranged guard.
+
+## Threat from wealth, not from time
+
+`map.wealthWatcher.WealthTotal`. A clean scheme that worked: tier = wealth / step, clamped; headcount = base + tier; gear tier by tier; no escalation per wave. Easier to reason about than per-wave decay.

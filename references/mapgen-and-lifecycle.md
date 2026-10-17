@@ -42,3 +42,19 @@ Auto-discovered via `typeof(GameComponent).AllSubclassesNonAbstract()`, needs a 
 ## Tick cadence
 
 `TickerType.Rare` = 250 ticks, `Long` = 2000. `MapComponent` ticks every tick (no interval base class). Never scan the whole map per tick. Needs: see `gameplay-snippets.md`.
+
+## Settings that are saved but never read
+
+A mod setting that only exists in `ExposeData` and the settings window does nothing. When adding a setting, grep for its use in the code that should obey it (here the "enable map generation" checkbox was never read by the GenStep for a long time).
+
+## Mine designations are per cell
+
+`DesignationDef` Mine has `targetType Cell`. `designationManager.DesignationOn(thing, Mine)` logs `Designations of type Mine are indexed by location only` and returns null. Use `DesignationAt(cell, DesignationDefOf.Mine)` and `AddDesignation(new Designation(cell, def))`. `Building.DeSpawn` removes them through `DesignationManager.Notify_BuildingDespawned` (for defs with `removeIfBuildingDespawned`), so to carry an order onto a replacement node: record the occupied cells that have one before `base.DeSpawn`, spawn the replacement, then re-add them.
+
+## Regrowing a Mineable
+
+`Mineable.DestroyMined` is not virtual and calls `Building.Destroy` via `base.`, so overriding `Destroy` never sees mining. Every path ends in `DeSpawn(mode)`: mining and killing blows are `DestroyMode.KillFinalize`, uninstalling (`MakeMinified`) is `Vanish`. Override `DeSpawn`, regrow only for `KillFinalize`, spawn the replacement after `base.DeSpawn`.
+
+## Game updates and the toolchain
+
+A game update can change the layout under `Managed` (a 1.7 build had no `mscorlib.dll`, ran on .NET 10 with Unity stubs). If `build.sh` suddenly reports CS0006 on every reference, check `Version.txt` and the Steam branch (`appmanifest_294100.acf` -> `BetaKey`) before touching code. Decompiled source and API notes are valid only for the version they were made from. Workshop mods also reorganise: the Harmony mod moved from `Current/Assemblies` to `<version>/Assemblies`.

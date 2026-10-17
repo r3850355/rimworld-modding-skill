@@ -2,7 +2,7 @@
 
 ## Keyed (`Languages/<Lang>/Keyed/*.xml`)
 
-Strings your C# calls with `"KEY".Translate(args)`. Files are enumerated recursively; any subfolder is fine. Root element `<LanguageData>`. Keep English and the translation key-for-key identical (`scripts/validate_mod.py` checks this). Use `\n` escaped as `\\n` in the XML text written from scripts; verify the result.
+Strings your C# calls with `"KEY".Translate(args)`. Files are enumerated recursively; any subfolder is fine. Root element `<LanguageData>`. Keep English and the translation key-for-key identical (`scripts/validate_mod.py` checks this). In the XML text, a backslash followed by `n` is the newline; when writing the file from a script, check the file contains that two-character sequence and not a real line break.
 
 ## DefInjected (`Languages/<Lang>/DefInjected/<DefType>/*.xml`)
 

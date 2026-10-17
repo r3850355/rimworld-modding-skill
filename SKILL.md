@@ -25,7 +25,7 @@ Verified facts and gotchas from a full mod build. Read only the reference file f
 | Map generation, GenStep order, placing structures, game-start state | `references/mapgen-and-lifecycle.md` |
 | ThingDef, HediffDef, ThoughtDef, FactionDef, PawnKindDef, textures, shadows | `references/defs-and-xml.md` |
 | Translations, DefInjected, Keyed | `references/localization.md` |
-| Needs, gear, letters, settings | `references/gameplay-snippets.md` |
+| Needs, gear, letters, settings, name colour | `references/gameplay-snippets.md` |
 | Symptom to cause lookup | `references/pitfalls.md` |
 
 ## Workflow

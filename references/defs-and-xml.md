@@ -42,3 +42,17 @@
 ## defName hygiene
 
 Prefix everything (`MYMOD_`). A FactionDef must not share a defName with a building. Run `scripts/validate_mod.py` for duplicates.
+
+## Player-buildable or not
+
+`BuildableDef.BuildableByPlayer` is simply `designationCategory != null`. Remove `designationCategory` and the thing never shows in the architect menu; it can still be uninstalled and reinstalled through `minifiedDef` (the install flow does not read `designationCategory`). Also drop `WorkToBuild` and any `costList`.
+
+## Resource nodes that regrow and can be moved
+
+Make them `Mineable` subclasses, not Plants: a Plant cannot be minified, so a tree built as a Plant can never be picked up and reinstalled. The vanilla Mine order then harvests them. A `ThingDef` for one needs `thingClass` (yours), `mineable true`, `passability Impassable`, `minifiedDef MinifiedThing`, `building.mineableThing` / `mineableYield`, and `alwaysUninstallable true`. Size can be larger than 1x1; vanilla has no 2x2 mineable but nothing in the mining code assumes one cell (not verified in game).
+
+Vanilla yields for reference: a components vein gives `ComponentIndustrial` x2, so keep that low rather than copying a steel yield of 40.
+
+## Textures: size rule
+
+128 px per cell: 1x1 is 128, 2x2 is 256, 3x3 is 384. Square PNG with alpha, `Graphic_Single`, `texPath` without extension, file under `Textures/...`. Match `drawSize` to the real aspect ratio; a non-square image is stretched.

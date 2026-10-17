@@ -43,3 +43,7 @@ Find.LetterStack.ReceiveLetter(label, text, myLetterDef, new LookTargets(thingOr
 ## Time
 
 `GenDate.TicksPerDay` 60000, `TicksPerHour` 2500. 600 ticks is 10 seconds at 1x.
+
+## Pawn name colour
+
+`PawnNameColorUtility.PawnNameColorOf(Pawn)` is static and reads a private static list of reds for all hostile factions. There is no Def field or event for it and the faction colour only tints the icon. The only way to recolour one faction is an optional Harmony postfix; see `extension-points.md`.
